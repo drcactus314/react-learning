@@ -1,4 +1,4 @@
-import { FunctionalComponent } from "./functionalComponent";
+import { FunctionalComponent } from "./FunctionalComponent";
 import  ClassComponent from "./ClassComponent"
 
 function App() {
