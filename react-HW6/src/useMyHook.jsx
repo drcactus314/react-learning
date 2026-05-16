@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 
-export const useWindowWidth = () => {
+export const useMyHook = () => {
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
