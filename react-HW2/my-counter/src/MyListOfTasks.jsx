@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { MyItemList } from "./MyItemList";
+import { SelectComponent } from "./SelectComponent";
 import styled from "styled-components";
 
 // import { RenderTaskList } from "./RenderTasksList";
 
 const myTasksData = [
-  { id: 1, task: "Wash dishes" },
-  { id: 2, task: "Tidy room" },
-  { id: 3, task: "Help mom" },
+  { id: 1, task: "Wash dishes", completed: false },
+  { id: 2, task: "Tidy room", completed: false },
+  { id: 3, task: "Help mom", completed: false },
 ];
 
 const ListStyle = styled.ul`
@@ -34,17 +35,27 @@ const InputStyle = styled.input`
   height: 2em;
   border-radius: 20px;
   margin-top: 1em;
-
 `;
 
 export const MyListOfTasks = () => {
   const [input, setInput] = useState("Write smth here");
   const [item, setItem] = useState(myTasksData);
 
+  const[select, setSelect] = useState("All");   //для селекту
+
+  const [error, setError] = useState ("");  // для валідації
+
   const onHandleAdd = (input) => {
-    const newObjData = { id: item.length + 1, task: input };
+
+    
+    if (input.length <=10){
+      return setError('Замало символів в рядку')};
+    if(input.length > 40){
+      return setError('Занадто велике завдання');
+      } 
+      setError("");
+    const newObjData = { id: item.length + 1, task: input, completed: false };
     const newElem = [...item, newObjData];
-    console.log(newElem);
 
     setItem(newElem);
     setInput("");
@@ -64,16 +75,42 @@ export const MyListOfTasks = () => {
     const value = e.target.value;
     setInput(value);
   };
+
+  const toggleTaskCompleted = (id) =>
+    setItem(
+      item.map((element) =>
+        element.id == id
+          ? { ...element, completed: !element.completed }
+          : element,
+      ),
+    );
+
+
+    const selectFilter = item.filter(selectElement=>{ 
+      if (select === 'Closed') {
+        return selectElement.completed === true};
+      if (select === 'Active') {
+        return selectElement.completed === false};
+        return true
+    });
+
   return (
     <>
-      <InputStyle onChange={changeValueInput} value={input} onKeyDown={pressEnter} />
+      <InputStyle
+        onChange={changeValueInput}
+        value={input}
+        onKeyDown={pressEnter}
+      />
+      {error && <p style={{color:"red"}}>{error}</p>}
+      <SelectComponent state={select} changeState={setSelect}/>
       <ListStyle>
-        {item.map((element, index) => (
+        {selectFilter.map((element, index) => (
           <MyItemList
             key={element.id}
             element={element}
             index={index}
             deleteEl={onDeleteItem}
+            toggleTaskCompleted={toggleTaskCompleted}
           />
         ))}
       </ListStyle>
